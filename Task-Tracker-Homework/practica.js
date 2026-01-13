@@ -22,7 +22,7 @@ const saveTask = (data) => {
 if (action === "add") {
     const tasks = readTask();
     const newTask = {
-        id: tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1,
+        id: tasks.length > 0 ? Math.max(...tasks.map((t) => t.id)) + 1 : 1,
         description: argumentss[3],
         status: "todo",
         createdAt: new Date().toString(),
@@ -36,7 +36,7 @@ if (action === "add") {
 } else if (action === "list") {
     const tasks = readTask();
     const filter = argumentss[3];
-    console.log("----Task List----");
+    console.log(`----Listing tasks ${filter ? `(${filter})` : "(todas)"}----`);
     tasks.forEach((task) => {
         if (!filter || task.status === filter) {
             console.log(
@@ -51,7 +51,7 @@ if (action === "add") {
 
     const deleteTask = tasks.filter((task) => task.id !== idDelete);
     if (tasks.length === deleteTask.length) {
-        console.log(`No se encontro ninguna tarea con el ID: ${idDelete}`);
+        console.log(`No task was found with the ID: ${idDelete}`);
     } else {
         saveTask(deleteTask);
         console.log(`Task deleted successfully (ID:${idDelete})`);
@@ -71,27 +71,18 @@ if (action === "add") {
     } else {
         console.log("Task not found");
     }
-} else if (action === "mark-in-progress") {
+} else if (action === "mark-in-progress" || action === "mark-done") {
     const tasks = readTask();
     const idUpdate = Number(argumentss[3]);
     const taskToUpdate = tasks.find((t) => t.id === idUpdate);
 
     if (taskToUpdate) {
-        taskToUpdate.status = "in-progress";
+        taskToUpdate.status = action === "mark-done" ? "done" : "in-progress";
         taskToUpdate.updatedAt = new Date().toString();
         saveTask(tasks);
-        console.log(`task ${idUpdate} marked as in progress`);
-    }
-} else if (action === "mark-done") {
-    const tasks = readTask();
-    const idUpdate = Number(argumentss[3]);
-    const taskToUpdate = tasks.find((t) => t.id === idUpdate);
-
-    if (taskToUpdate) {
-        taskToUpdate.status = "done";
-        taskToUpdate.updatedAt = new Date().toString();
-        saveTask(tasks);
-        console.log(`task ${idUpdate} marked as in progress`);
+        console.log(`Task ${idUpdate} marked as ${taskToUpdate.status}`);
+    } else {
+        console.log("task not found");
     }
 } else {
     console.log("unrecognized command...");
